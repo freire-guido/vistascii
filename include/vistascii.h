@@ -17,8 +17,14 @@ namespace va {
         }
     };
     struct VertexRenderer {
+        int height, width;
         std::vector<VertexEntity> entities;
         Vec3 camera_pos;
-        VertexRenderer(std::initializer_list<VertexEntity> el, Vec3 cp = {0, 0, 0}): entities{el}, camera_pos{cp} {};
+        VertexRenderer(std::initializer_list<VertexEntity> el, Vec3 cp = {0, 0, 1}): entities{el}, camera_pos{cp} {
+            initscr();
+            noecho();
+            getmaxyx(stdscr, height, width);
+        };
+        void render();
     };
 }
