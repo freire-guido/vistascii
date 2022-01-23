@@ -12,8 +12,10 @@ void va::VertexRenderer::render() {
     std::vector<std::string> window(height, std::string(width, getDepthChar(-1)));
     for (VertexEntity& entity: entities) {
         for (Vec3& vertex: entity.vertexes) {
-            Vec3 projection = vertex / dot(vertex, camera_pos);
-            window[projection.y][projection.x] = getDepthChar(vertex.length());
+            Vec3 projection = vertex / dot(vertex, camera_pos) + Vec3(width, height, 0) / 2;
+            if (0 <= projection.x && projection.x < width && 0 <= projection.y && projection.y < height) {
+                window[projection.y][projection.x] = getDepthChar(vertex.length());
+            }
         }
     }
     for (int row = 0; row < window.size(); row++) {
