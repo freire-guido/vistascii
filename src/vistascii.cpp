@@ -23,6 +23,11 @@ void va::VertexRenderer::render() {
             if (dot(entity.vertexes[i-1], camera_pos) > 0 || dot(entity.vertexes[i % entity.vertexes.size()], camera_pos) > 0) {
                 Vec3 projectionA = persproject(entity.vertexes[i - 1], camera_pos, 1) + Vec3(width, height, 0) / 2;
                 Vec3 projectionB = persproject(entity.vertexes[i % entity.vertexes.size()], camera_pos, 1) + Vec3(width, height, 0) / 2;
+                if (entity.vertexes[i - 1].x > entity.vertexes[i % entity.vertexes.size()].x) {
+                    Vec3 tmp = projectionA;
+                    projectionA = projectionB; // Swap projection vectors
+                    projectionB = tmp;
+                }
                 float dy = projectionB.y - projectionA.y;
                 float dx = projectionB.x - projectionA.x;
                 for (int x = projectionA.x; x <= projectionB.x; x++){
@@ -35,7 +40,7 @@ void va::VertexRenderer::render() {
         }
     }
     for (int row = 0; row < window.size(); row++) {
-        mvprintw(row, 0, window[row].c_str());
+        mvaddstr(row, 0, window[row].c_str());
     }
     refresh();
 }
