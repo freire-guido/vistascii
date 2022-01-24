@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <math.h>
 
 struct Vec3 {
@@ -27,6 +28,7 @@ struct Vec3 {
     float length() {
         return sqrt(x*x + y*y + z*z);
     }
+    void transform(const std::vector<Vec3>& m);
 };
 
 Vec3 normalize(Vec3 v);

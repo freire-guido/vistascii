@@ -1,23 +1,26 @@
 #include "include/vistascii.h"
 
 int main() {
-    va::VertexEntity vex = {{-4, 1, 2}, {0, -2, 4}, {4, 1, 2}}; 
-    va::VertexRenderer ver({vex});
-    Vec3 move;
+    va::VertexRenderer ver({});
+    for (float i = -30; i < 30; i+=6) {
+        ver.add({{i, 0, 1}, {i + 1, 1, 1}, {i + 2, 0, 1}});
+        ver.add({{i + 3, 1, 1}, {i + 4, 0, 1}, {i + 5, 1, 1}});
+    }
+    std::vector<Vec3> tMatrix;
     while (true) {
-        ver.render();
-        refresh();
+        int key = getch();
+        if (key == 'q') {
+            tMatrix = {{1,0,0}, {0,cos(0.01),-sin(0.01)}, {0,sin(0.01),cos(0.01)}};
+        } else if (key == 'e') {
+            tMatrix = {{1,0,0}, {0,cos(-0.01),-sin(-0.01)}, {0,sin(-0.01),cos(-0.01)}};
+        }
         for (va::VertexEntity& ventity: ver.entities) {
             for (Vec3& vertex: ventity.vertexes) {
-                vertex = vertex + move; 
+                vertex.transform(tMatrix);
             }
         }
-        int key = getch();
-        if (key == 'a') {
-            move = {0, 0, 0.1};
-        } else if (key == 'b') {
-            move = {-0 , -0, -0.1};
-        }
+        ver.render();
+        refresh();
     }
     endwin();
     return 0;
