@@ -25,6 +25,9 @@ namespace va {
             noecho();
             getmaxyx(stdscr, height, width);
         };
+        void add(VertexEntity ve) {
+            entities.push_back(ve);
+        }
         void render();
     };
 }
