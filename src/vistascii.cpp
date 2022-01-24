@@ -26,7 +26,7 @@ void va::VertexRenderer::render() {
                 float dy = projectionB.y - projectionA.y;
                 float dx = projectionB.x - projectionA.x;
                 for (int x = projectionA.x; x <= projectionB.x; x++){
-                    int y = dy / dx * x;
+                    int y = dy / dx * (x - projectionA.x) + projectionA.y;
                     if (0 <= x && x < width && 0 <= y && y < height) {
                         window[y][x] = getDepthChar(projectionA.z + (projectionB.z - projectionA.z)*(x - projectionA.x)/(projectionB.x - projectionA.x));
                     }
