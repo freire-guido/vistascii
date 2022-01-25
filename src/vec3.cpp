@@ -2,9 +2,9 @@
 
 void Vec3::transform(const std::vector<Vec3>& m) {
     Vec3 res  = *this;
-    x = m[0].x*res.x + m[0].y*res.y + m[0].z*res.z;
-    y = m[1].x*res.x + m[1].y*res.y + m[1].z*res.z; // Should be dot products
-    z = m[2].x*res.x + m[2].y*res.y + m[2].z*res.z;
+    x = dot(m[0], res);
+    y = dot(m[1], res); // Should be dot products
+    z = dot(m[2], res);
 }
 
 Vec3 normalize(Vec3 v) {

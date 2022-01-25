@@ -18,6 +18,11 @@ namespace va {
             b += direction;
             c += direction;
         }
+        void transform(const std::vector<Vec3>& m) {
+            a.transform(m);
+            b.transform(m);
+            c.transform(m);
+        }
     };
     struct VertexEntity {
         std::vector<Polygon> polygons;
@@ -26,6 +31,11 @@ namespace va {
         void move(Vec3 direction) {
             for (Polygon& polygon: polygons) {
                 polygon.move(direction);
+            }
+        }
+        void transform(const std::vector<Vec3>& m) {
+            for (Polygon& polygon: polygons) {
+                polygon.transform(m);
             }
         }
     };
