@@ -1,7 +1,7 @@
 #include "../include/vistascii.h"
 
 char getDepthChar(int d) {
-    std::string charMap = "@$#*!;:=~-,. ";
+    std::string charMap = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
     if (d < 0 || d / 2 >= charMap.size()) {
         d = charMap.size() * 2 - 1;
     }
