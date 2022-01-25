@@ -3,7 +3,7 @@
 void Vec3::transform(const std::vector<Vec3>& m) {
     Vec3 res  = *this;
     x = dot(m[0], res);
-    y = dot(m[1], res); // Should be dot products
+    y = dot(m[1], res);
     z = dot(m[2], res);
 }
 
