@@ -16,8 +16,23 @@ Vec3 persproject(Vec3 v, Vec3 n, float dist) {
     return v;
 }
 
+void va::VertexRenderer::drawEdge(const Vec3& vexA, const Vec3& vexB) {
+    float dy = vexB.y - vexA.y;
+    float dx = vexB.x - vexA.x;
+    for (int x = vexA.x; x <= vexB.x; x++){
+        int y = dy / dx * (x - vexA.x) + vexA.y;
+        if (0 <= x && x < width && 0 <= y && y < height) {
+            // Z buffer
+            float depth = vexA.z + (vexB.z - vexA.z)*(x - vexA.x)/(vexB.x - vexA.x);
+            if (depth < depthWindow[y][x] || depthWindow[y][x] == -1) {
+                depthWindow[y][x] = depth;
+            }
+        }
+    }
+}
+
 void va::VertexRenderer::render() {
-    std::vector<std::vector<float>> window(height, std::vector<float>(width, -1));
+    depthWindow = std::vector(height, std::vector<float>(width, -1));
     for (VertexEntity& entity: entities) {
         for (int i = 1; i <= entity.vertexes.size(); i++) {
             if (dot(entity.vertexes[i-1], camera_pos) > 0 || dot(entity.vertexes[i % entity.vertexes.size()], camera_pos) > 0) {
@@ -28,24 +43,13 @@ void va::VertexRenderer::render() {
                     projectionA = projectionB; // Swap projection vectors
                     projectionB = tmp;
                 }
-                float dy = projectionB.y - projectionA.y;
-                float dx = projectionB.x - projectionA.x;
-                for (int x = projectionA.x; x <= projectionB.x; x++){
-                    int y = dy / dx * (x - projectionA.x) + projectionA.y;
-                    if (0 <= x && x < width && 0 <= y && y < height) {
-                        // Z buffer
-                        float depth = projectionA.z + (projectionB.z - projectionA.z)*(x - projectionA.x)/(projectionB.x - projectionA.x);
-                        if (depth < window[y][x] || window[y][x] == -1) {
-                            window[y][x] = depth;
-                        }
-                    }
-                }
+                drawEdge(projectionA, projectionB);
             }   
         }
     }
-    for (int row = 0; row < window.size(); row++) {
-        for (int col = 0; col < window[row].size(); col++) {
-            mvaddch(row, col, getDepthChar(window[row][col]));
+    for (int row = 0; row < depthWindow.size(); row++) {
+        for (int col = 0; col < depthWindow[row].size(); col++) {
+            mvaddch(row, col, getDepthChar(depthWindow[row][col]));
         }
     }
     refresh();
