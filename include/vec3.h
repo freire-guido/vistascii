@@ -10,17 +10,37 @@ struct Vec3 {
     Vec3 operator+(Vec3 v) {
         return Vec3(x + v.x, y + v.y, z + v.z);
     }
+    void operator+=(Vec3 v) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+    }
     Vec3 operator-(Vec3 v) {
         return Vec3(x - v.x, y - v.y, z - v.z);
     }
+    void operator-=(Vec3 v) {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+    }
     Vec3 operator*(Vec3 v) {
         return Vec3(x * v.x, y * v.y, z * v.z);
+    }
+    void operator*=(Vec3 v) {
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
     }
     Vec3 operator*(float f) {
         return Vec3(x*f, y*f, z*f);
     }
     Vec3 operator/(Vec3 v) {
         return Vec3(x / v.x, y / v.y, z / v.z);
+    }
+    void operator/=(Vec3 v) {
+        x /= v.x;
+        y /= v.y;
+        z /= v.z;
     }
     Vec3 operator/(float f) {
         return Vec3(x / f, y / f, z / f);

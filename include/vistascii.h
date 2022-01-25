@@ -6,14 +6,27 @@
 #include "vec3.h"
 
 namespace va {
-    struct VertexEntity {
-        std::vector<Vec3> vertexes;
-        VertexEntity(std::initializer_list<Vec3> vl): vertexes{vl} {};
-        void add(Vec3 v) {
-            vertexes.push_back(v);
+    struct Polygon {
+        Vec3 a, b, c;
+        Polygon();
+        Polygon(Vec3 _a, Vec3 _b, Vec3 _c): a{_a}, b{_b}, c{_c} {};
+        std::vector<Vec3> vertexes() const {
+            return {a, b, c};
         }
-        void remove(int i) {
-            vertexes.erase(vertexes.begin() + i);
+        void move(Vec3 direction) {
+            a += direction;
+            b += direction;
+            c += direction;
+        }
+    };
+    struct VertexEntity {
+        std::vector<Polygon> polygons;
+        VertexEntity(std::initializer_list<Polygon> pl): polygons{pl} {};
+        VertexEntity(std::string path);
+        void move(Vec3 direction) {
+            for (Polygon& polygon: polygons) {
+                polygon.move(direction);
+            }
         }
     };
     struct VertexRenderer {

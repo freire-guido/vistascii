@@ -1,27 +1,23 @@
 #include "include/vistascii.h"
 
 int main() {
-    va::VertexRenderer ver({});
-    for (float x = -30; x < 30; x+=6) {
-        for (float z = 2; z < 10; z++) {
-            int r = rand();
-            if (0 <= r && r < 715827882) {
-                ver.add({{x, 0, z}, {x + 1, 1, z}, {x + 2, 0, z}});
-            } else if (r <= 715827882 && r < 1431655764) {
-                ver.add({{x + 3, 1, z}, {x + 4, 0, z}, {x + 5, 1, z}});
-            }
-        }
-    }
-    std::vector<Vec3> tMatrix = {{1,0,0}, {0,1,0}, {0,0,1}};
+    va::VertexRenderer ver({va::VertexEntity("./data/tank")});
+    Vec3 move;
     while (true) {
         int key = getch();
+        if (key == 'w') {
+            move = {0, 0, 0.1};
+        } else if (key == 's') {
+            move  = {0, 0, -0.1};
+        } else if (key == 'd') {
+            move = {0.1, 0, 0};
+        } else if (key == 'a') {
+            move = {-0.1, 0, 0};
+        }
         for (va::VertexEntity& ventity: ver.entities) {
-            for (Vec3& vertex: ventity.vertexes) {
-                vertex = vertex + Vec3(0, 0, -0.01);
-            }
+            ventity.move(move);
         }
         ver.render();
-        refresh();
     }
     return 0;
 }

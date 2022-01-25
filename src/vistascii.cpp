@@ -1,11 +1,29 @@
 #include "../include/vistascii.h"
+#include <fstream>
+#include <iostream>
+
+va::VertexEntity::VertexEntity(std::string path) {
+    std::ifstream file(path);
+    std::string line;
+    while(!file.eof()) {
+        float x, y, z;
+        file >> x >> y >> z;
+        Vec3 a(x, y, z);
+        file >> x >> y >> z;
+        Vec3 b(x, y, z);
+        file >> x >> y >> z;
+        Vec3 c(x, y, z);
+        polygons.push_back(Polygon(a, b, c));
+    }
+    file.close();
+}
 
 char getDepthChar(int d) {
     std::string charMap = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
-    if (d < 0 || d / 2 >= charMap.size()) {
-        d = charMap.size() * 2 - 1;
+    if (d < 0 || d >= charMap.size()) {
+        d = charMap.size() - 1;
     }
-    return charMap[d / 2];
+    return charMap[d];
 }
 
 Vec3 persproject(Vec3 v, Vec3 n, float dist) {
@@ -33,18 +51,20 @@ void va::VertexRenderer::drawEdge(const Vec3& vexA, const Vec3& vexB) {
 
 void va::VertexRenderer::render() {
     depthWindow = std::vector(height, std::vector<float>(width, -1));
-    for (VertexEntity& entity: entities) {
-        for (int i = 1; i <= entity.vertexes.size(); i++) {
-            if (dot(entity.vertexes[i-1], camera_pos) > 0 || dot(entity.vertexes[i % entity.vertexes.size()], camera_pos) > 0) {
-                Vec3 projectionA = persproject(entity.vertexes[i - 1], camera_pos, 1) + Vec3(width, height, 0) / 2;
-                Vec3 projectionB = persproject(entity.vertexes[i % entity.vertexes.size()], camera_pos, 1) + Vec3(width, height, 0) / 2;
-                if (entity.vertexes[i - 1].x > entity.vertexes[i % entity.vertexes.size()].x) {
-                    Vec3 tmp = projectionA;
-                    projectionA = projectionB; // Swap projection vectors
-                    projectionB = tmp;
-                }
-                drawEdge(projectionA, projectionB);
-            }   
+    for (const VertexEntity& entity: entities) {
+        for (const Polygon& polygon: entity.polygons){ 
+            for (int i = 1; i <= polygon.vertexes().size(); i++) {
+                if (dot(polygon.vertexes()[i-1], camera_pos) > 0 || dot(polygon.vertexes()[i % polygon.vertexes().size()], camera_pos) > 0) {
+                    Vec3 projectionA = persproject(polygon.vertexes()[i - 1], camera_pos, 10) + Vec3(width, height, 0) / 2;
+                    Vec3 projectionB = persproject(polygon.vertexes()[i % polygon.vertexes().size()], camera_pos, 10) + Vec3(width, height, 0) / 2;
+                    if (polygon.vertexes()[i - 1].x > polygon.vertexes()[i % polygon.vertexes().size()].x) {
+                        Vec3 tmp = projectionA;
+                        projectionA = projectionB; // Swap projection vectors
+                        projectionB = tmp;
+                    }
+                    drawEdge(projectionA, projectionB);
+                }   
+            }
         }
     }
     for (int row = 0; row < depthWindow.size(); row++) {
