@@ -1,6 +1,9 @@
 #include "../include/vec3.h"
 
 void Vec3::transform(const std::vector<Vec3>& m) {
+    if (m.size() > 3) {
+        std::__throw_invalid_argument("Transformation matrix must be 3x3");
+    }
     Vec3 res  = *this;
     x = dot(m[0], res);
     y = dot(m[1], res);

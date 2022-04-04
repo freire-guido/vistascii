@@ -6,10 +6,10 @@
 #include "vec3.h"
 
 namespace va {
-    struct Polygon {
+    struct Trigon {
         Vec3 a, b, c;
-        Polygon();
-        Polygon(Vec3 _a, Vec3 _b, Vec3 _c): a{_a}, b{_b}, c{_c} {};
+        Trigon();
+        Trigon(Vec3 _a, Vec3 _b, Vec3 _c): a{_a}, b{_b}, c{_c} {};
         std::vector<Vec3> vertexes() const {
             return {a, b, c};
         }
@@ -25,17 +25,17 @@ namespace va {
         }
     };
     struct VertexEntity {
-        std::vector<Polygon> polygons;
-        VertexEntity(std::initializer_list<Polygon> pl): polygons{pl} {};
+        std::vector<Trigon> trigons;
+        VertexEntity(std::initializer_list<Trigon> pl): trigons{pl} {};
         VertexEntity(std::string path);
         void move(Vec3 direction) {
-            for (Polygon& polygon: polygons) {
-                polygon.move(direction);
+            for (Trigon& trigon: trigons) {
+                trigon.move(direction);
             }
         }
         void transform(const std::vector<Vec3>& m) {
-            for (Polygon& polygon: polygons) {
-                polygon.transform(m);
+            for (Trigon& trigon: trigons) {
+                trigon.transform(m);
             }
         }
     };

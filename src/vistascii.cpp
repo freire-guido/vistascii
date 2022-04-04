@@ -13,7 +13,7 @@ va::VertexEntity::VertexEntity(std::string path) {
         Vec3 b(x, y, z);
         file >> x >> y >> z;
         Vec3 c(x, y, z);
-        polygons.push_back(Polygon(a, b, c));
+        trigons.push_back(Trigon(a, b, c));
     }
     file.close();
 }
@@ -52,17 +52,11 @@ void va::VertexRenderer::drawEdge(const Vec3& vexA, const Vec3& vexB) {
 void va::VertexRenderer::render() {
     depthWindow = std::vector(height, std::vector<float>(width, -1));
     for (const VertexEntity& entity: entities) {
-        for (const Polygon& polygon: entity.polygons){ 
-            for (int i = 1; i <= polygon.vertexes().size(); i++) {
-                if (dot(polygon.vertexes()[i-1], camera_pos) > 0 || dot(polygon.vertexes()[i % polygon.vertexes().size()], camera_pos) > 0) {
-                    Vec3 projectionA = persproject(polygon.vertexes()[i - 1], camera_pos, 10) + Vec3(width, height, 0) / 2;
-                    Vec3 projectionB = persproject(polygon.vertexes()[i % polygon.vertexes().size()], camera_pos, 10) + Vec3(width, height, 0) / 2;
-                    if (polygon.vertexes()[i - 1].x > polygon.vertexes()[i % polygon.vertexes().size()].x) {
-                        Vec3 tmp = projectionA;
-                        projectionA = projectionB; // Swap projection vectors
-                        projectionB = tmp;
-                    }
-                    drawEdge(projectionA, projectionB);
+        for (const Trigon& trigon: entity.trigons){ 
+            for (int i = 0; i <= trigon.vertexes().size(); i++) {
+                if (dot(trigon.vertexes()[i], camera_pos) > 0 || dot(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos) > 0) {
+                    drawEdge(persproject(trigon.vertexes()[i], camera_pos, 10) + Vec3(width, height, 0) / 2,
+                        persproject(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos, 10) + Vec3(width, height, 0) / 2);
                 }   
             }
         }
