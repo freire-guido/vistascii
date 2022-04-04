@@ -28,7 +28,7 @@ char getDepthChar(int d) {
 
 Vec3 persproject(Vec3 v, Vec3 N, float dist) {
     float vN = dot(v, N);
-    Vec3 p = v * dist / vN;
+    Vec3 p = v * dist / vN - normalize(N);
     v.x = dot(p, {1, 0, -N.x});
     v.y = dot(p, {0, 1, -N.y});
     v.z = vN;

@@ -45,6 +45,11 @@ struct Vec3 {
     Vec3 operator/(float f) {
         return Vec3(x / f, y / f, z / f);
     }
+    void operator/=(float f) {
+        x /= f;
+        y /= f;
+        z /= f;
+    }
     float length() {
         return sqrt(x*x + y*y + z*z);
     }
