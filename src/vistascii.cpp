@@ -56,8 +56,8 @@ void va::VertexRenderer::render() {
         for (const Trigon& trigon: entity.trigons){ 
             for (int i = 0; i <= trigon.vertexes().size(); i++) {
                 if (dot(trigon.vertexes()[i], camera_pos) > 0 || dot(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos) > 0) {
-                    drawEdge(persproject(trigon.vertexes()[i], camera_pos, 10) + Vec3(width, height, 0) / 2,
-                        persproject(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos, 10) + Vec3(width, height, 0) / 2);
+                    drawEdge(persproject(trigon.vertexes()[i], camera_pos, focal_length) + Vec3(width, height, 0) / 2,
+                        persproject(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos, focal_length) + Vec3(width, height, 0) / 2);
                 }   
             }
         }

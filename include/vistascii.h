@@ -44,7 +44,8 @@ namespace va {
         std::vector<VertexEntity> entities;
         std::vector<std::vector<float>> depthWindow;
         Vec3 camera_pos;
-        VertexRenderer(std::initializer_list<VertexEntity> el, Vec3 cp = {0, 0, 1}): entities{el}, camera_pos{cp} {
+        float focal_length;
+        VertexRenderer(std::initializer_list<VertexEntity> el, Vec3 cp = {0, 0, 1}, float fl = 10): entities{el}, camera_pos{cp}, focal_length{fl} {
             initscr();
             noecho();
             getmaxyx(stdscr, height, width);
