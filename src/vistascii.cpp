@@ -26,11 +26,12 @@ char getDepthChar(int d) {
     return charMap[d];
 }
 
-Vec3 persproject(Vec3 v, Vec3 n, float dist) {
-    Vec3 p = v * dist / dot(v, n) - normalize(n);
-    v.x = dot(p, {1, 0, -n.x});
-    v.y = dot(p, {0, 1, -n.y});
-    v.z = dot(v, normalize(n));
+Vec3 persproject(Vec3 v, Vec3 N, float dist) {
+    float vN = dot(v, N);
+    Vec3 p = v * dist / vN;
+    v.x = dot(p, {1, 0, -N.x});
+    v.y = dot(p, {0, 1, -N.y});
+    v.z = vN;
     return v;
 }
 
