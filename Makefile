@@ -6,3 +6,6 @@ vistascii.o: vec3.o src/vistascii.cpp
 
 vec3.o: src/vec3.cpp
 	g++ -c src/vec3.cpp
+
+clean:
+	rm main *.o
