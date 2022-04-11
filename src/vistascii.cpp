@@ -26,6 +26,15 @@ char getDepthChar(int d) {
     return charMap[d];
 }
 
+//Normalized N
+Vec3 deProject(int x, int y, Vec3 N, float dist) {
+    float r = N.x * N.x + N.y * N.y + N.z;
+    float px = (x*(N.y * N.y + N.z) - y*N.x*N.y) / r;
+    float py = (y*(N.x * N.x + N.z) - x*N.x*N.y) / r;
+    return {px, py, -(px*N.x+py*N.y) / N.z};
+}
+
+
 // Normalized N
 Vec3 persProject(Vec3 v, Vec3 N, float dist) {
     float vN = dot(v, N);
