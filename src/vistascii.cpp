@@ -26,9 +26,10 @@ char getDepthChar(int d) {
     return charMap[d];
 }
 
-Vec3 persproject(Vec3 v, Vec3 N, float dist) {
+// Normalized N
+Vec3 persProject(Vec3 v, Vec3 N, float dist) {
     float vN = dot(v, N);
-    Vec3 p = v * dist / vN - normalize(N);
+    Vec3 p = v * dist / vN - N;
     v.x = dot(p, {1, 0, -N.x});
     v.y = dot(p, {0, 1, -N.y});
     v.z = vN;
@@ -56,8 +57,8 @@ void va::VertexRenderer::render() {
         for (const Trigon& trigon: entity.trigons){ 
             for (int i = 0; i <= trigon.vertexes().size(); i++) {
                 if (dot(trigon.vertexes()[i], camera_pos) > 0 || dot(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos) > 0) {
-                    drawEdge(persproject(trigon.vertexes()[i], camera_pos, focal_length) + Vec3(width, height, 0) / 2,
-                        persproject(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos, focal_length) + Vec3(width, height, 0) / 2);
+                    drawEdge(persProject(trigon.vertexes()[i], camera_pos, focal_length) + Vec3(width, height, 0) / 2,
+                        persProject(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos, focal_length) + Vec3(width, height, 0) / 2);
                 }   
             }
         }
