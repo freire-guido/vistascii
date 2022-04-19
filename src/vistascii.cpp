@@ -2,7 +2,9 @@
 #include <fstream>
 #include <iostream>
 
-va::VertexEntity::VertexEntity(std::string path) {
+using namespace va;
+
+VertexEntity::VertexEntity(std::string path) {
     std::ifstream file(path);
     std::string line;
     while(!file.eof()) {
@@ -45,7 +47,7 @@ Vec3 persProject(Vec3 v, Vec3 N, float dist) {
     return v;
 }
 
-void va::VertexRenderer::drawEdge(const Vec3& vexA, const Vec3& vexB) {
+void VertexRenderer::drawEdge(const Vec3& vexA, const Vec3& vexB) {
     float dy = vexB.y - vexA.y;
     float dx = vexB.x - vexA.x;
     for (int x = vexA.x; x <= vexB.x; x++){
@@ -53,15 +55,15 @@ void va::VertexRenderer::drawEdge(const Vec3& vexA, const Vec3& vexB) {
         if (0 <= x && x < width && 0 <= y && y < height) {
             // Z buffer
             float depth = vexA.z + (vexB.z - vexA.z)*(x - vexA.x)/(vexB.x - vexA.x);
-            if (depth < depthWindow[y][x] || depthWindow[y][x] == -1) {
-                depthWindow[y][x] = depth;
+            if (depth < z_buffer[y][x] || z_buffer[y][x] == -1) {
+                z_buffer[y][x] = depth;
             }
         }
     }
 }
 
-void va::VertexRenderer::render() {
-    depthWindow = std::vector(height, std::vector<float>(width, -1));
+void VertexRenderer::render() {
+    z_buffer = -1;
     for (const VertexEntity& entity: entities) {
         for (const Trigon& trigon: entity.trigons){ 
             for (int i = 0; i <= trigon.vertexes().size(); i++) {
@@ -72,9 +74,9 @@ void va::VertexRenderer::render() {
             }
         }
     }
-    for (int row = 0; row < depthWindow.size(); row++) {
-        for (int col = 0; col < depthWindow[row].size(); col++) {
-            mvaddch(row, col, getDepthChar(depthWindow[row][col]));
+    for (int row = 0; row < z_buffer.height; row++) {
+        for (int col = 0; col < z_buffer.width; col++) {
+            mvaddch(row, col, getDepthChar(z_buffer[row][col]));
         }
     }
     refresh();
