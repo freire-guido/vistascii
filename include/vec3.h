@@ -53,6 +53,11 @@ struct Vec3 {
     float length() {
         return sqrt(x*x + y*y + z*z);
     }
+    void swapxy() {
+        float tmp = x;
+        x = y;
+        y = tmp;
+    };
     void transform(const std::vector<Vec3>& m);
 };
 

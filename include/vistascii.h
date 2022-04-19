@@ -113,7 +113,7 @@ namespace va {
         void add(VertexEntity ve) {
             entities.push_back(ve);
         }
-        void drawEdge(const Vec3& vexA, const Vec3& vexB);
+        void drawEdge(Vec3 vexA, Vec3 vexB);
         void render();
     };
 }

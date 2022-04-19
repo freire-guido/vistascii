@@ -47,16 +47,33 @@ Vec3 persProject(Vec3 v, Vec3 N, float dist) {
     return v;
 }
 
-void VertexRenderer::drawEdge(const Vec3& vexA, const Vec3& vexB) {
-    float dy = vexB.y - vexA.y;
+void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
     float dx = vexB.x - vexA.x;
+    float dy = vexB.y - vexA.y;
+    bool steep = abs(dy) > abs(dx);
+    if (steep) {
+        float tmp = dy;
+        dy = dx;
+        dx = tmp;
+        vexA.swapxy();
+        vexB.swapxy();
+    }
+    if (dx < 0) {
+        Vec3 tmp = vexA;
+        vexA = vexB;
+        vexB = tmp;
+    }
     for (int x = vexA.x; x <= vexB.x; x++){
         int y = dy / dx * (x - vexA.x) + vexA.y;
         if (0 <= x && x < width && 0 <= y && y < height) {
-            // Z buffer
             float depth = vexA.z + (vexB.z - vexA.z)*(x - vexA.x)/(vexB.x - vexA.x);
-            if (depth < z_buffer[y][x] || z_buffer[y][x] == -1) {
-                z_buffer[y][x] = depth;
+            float stored = steep ? z_buffer[x][y] : z_buffer[y][x];
+            if (depth < stored || stored == -1) {
+                if (steep) {
+                    z_buffer[x][y] = depth;
+                } else {
+                    z_buffer[y][x] = depth;
+                }
             }
         }
     }
