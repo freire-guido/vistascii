@@ -115,5 +115,6 @@ namespace va {
         }
         void drawEdge(Vec3 vexA, Vec3 vexB);
         void render();
+        void refresh();
     };
 }

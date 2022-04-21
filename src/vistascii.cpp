@@ -63,9 +63,9 @@ void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
         vexA = vexB;
         vexB = tmp;
     }
-    for (int x = vexA.x; x <= vexB.x; x++){
+    for (int x = vexA.x; 0 <= x && x <= vexB.x; x++){
         int y = dy / dx * (x - vexA.x) + vexA.y;
-        if (0 <= x && x < width && 0 <= y && y < height) {
+        if (0 <= y && y < height) {
             float depth = vexA.z + (vexB.z - vexA.z)*(x - vexA.x)/(vexB.x - vexA.x);
             float stored = steep ? z_buffer[x][y] : z_buffer[y][x];
             if (depth < stored || stored == -1) {
@@ -97,4 +97,13 @@ void VertexRenderer::render() {
         }
     }
     refresh();
+}
+
+void VertexRenderer::refresh() {
+    for (int row = 0; row < z_buffer.height; row++) {
+        for (int col = 0; col < z_buffer.width; col++) {
+            mvaddch(row, col, getDepthChar(z_buffer[row][col]));
+        }
+    }
+    wrefresh(stdscr);
 }
