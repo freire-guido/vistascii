@@ -1,6 +1,9 @@
 main: vec3.o vistascii.o main.cpp
 	g++ vec3.o vistascii.o main.cpp -lncurses -o main
 
+debug: vec3.o vistascii.o main.cpp
+	g++ -g vec3.o vistascii.o main.cpp -lncurses -o main
+
 vistascii.o: vec3.o src/vistascii.cpp
 	g++ -c src/vistascii.cpp
 
