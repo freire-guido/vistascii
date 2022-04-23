@@ -95,11 +95,6 @@ void VertexRenderer::render() {
             }
         }
     }
-    for (int row = 0; row < z_buffer.height; row++) {
-        for (int col = 0; col < z_buffer.width; col++) {
-            mvaddch(row, col, getDepthChar(z_buffer[row][col]));
-        }
-    }
     refresh();
 }
 
