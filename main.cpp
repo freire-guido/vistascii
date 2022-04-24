@@ -3,8 +3,8 @@
 
 using namespace va;
 int main() {
-    va::VertexRenderer ver({va::VertexEntity("./data/shard")}, {0,1,0}, 10);
-    ver.entities[0].move({0, 10, -2});
+    va::VertexRenderer ver({va::VertexEntity("./data/tank")}, {0,0,1}, 0.5);
+    ver.entities()[0].move({0, 10, 1});
     Vec3 move;
     while (true) {
         ver.render();
@@ -22,7 +22,7 @@ int main() {
         } else if (key == 'f') {
             move = {0, 0, -0.5};
         }
-        ver.entities[0].move(move);
+        ver.entities()[0].move(move);
     }
     return 0;
 }
