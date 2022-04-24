@@ -15,7 +15,7 @@ VertexEntity::VertexEntity(std::string path) {
         Vec3 b(x, y, z);
         file >> x >> y >> z;
         Vec3 c(x, y, z);
-        trigons.push_back(Trigon(a, b, c));
+        entities.push_back(Trigon(a, b, c));
     }
     file.close();
 }
@@ -85,12 +85,12 @@ void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
 
 void VertexRenderer::render() {
     _zbuffer = -1;
-    for (const VertexEntity& entity: _entities) {
-        for (const Trigon& trigon: entity.trigons) { 
-            for (int i = 0; i < trigon.vertexes().size(); i++) {
-                if (dot(trigon.vertexes()[i], _normal) > 0 || dot(trigon.vertexes()[i + 1 % trigon.vertexes().size()], _normal) > 0) {
-                    drawEdge(persProject(trigon.vertexes()[i], _normal, _focal) + Vec3(_width, _height, 0) / 2,
-                        persProject(trigon.vertexes()[(i + 1) % trigon.vertexes().size()], _normal, _focal) + Vec3(_width, _height, 0) / 2);
+    for (VertexEntity& entity: _entities) {
+        for (Entity& ngon: entity.entities) { 
+            for (int i = 0; i < ngon.size(); i++) {
+                if (dot(ngon.vertexes()[i], _normal) > 0 || dot(ngon.vertexes()[i + 1 % ngon.size()], _normal) > 0) {
+                    drawEdge(persProject(ngon.vertexes()[i], _normal, _focal) + Vec3(_width, _height, 0) / 2,
+                        persProject(ngon.vertexes()[(i + 1) % ngon.size()], _normal, _focal) + Vec3(_width, _height, 0) / 2);
                 }   
             }
         }

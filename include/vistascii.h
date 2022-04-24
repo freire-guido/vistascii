@@ -6,36 +6,44 @@
 #include "vec3.h"
 
 namespace va {
-    struct Trigon {
-        Vec3 a, b, c;
-        Trigon();
-        Trigon(Vec3 _a, Vec3 _b, Vec3 _c): a{_a}, b{_b}, c{_c} {};
-        std::vector<Vec3> vertexes() const {
-            return {a, b, c};
+    struct Entity {
+        virtual int size() const = 0;
+        virtual Vec3* vertexes() = 0;
+        virtual void move(const Vec3&);
+        virtual void transform(const std::vector<Vec3>&);
+    };
+    struct Trigon: Entity {
+        Vec3 _vertexes[3];
+        Trigon(Vec3 a, Vec3 b, Vec3 c): _vertexes{a, b, c} {};
+        int size() const {
+            return 3;
         }
-        void move(Vec3 direction) {
-            a += direction;
-            b += direction;
-            c += direction;
+        Vec3* vertexes() {
+            return _vertexes;
+        }
+        void move(const Vec3& direction) {
+            _vertexes[0] += direction;
+            _vertexes[1] += direction;
+            _vertexes[2] += direction;
         }
         void transform(const std::vector<Vec3>& m) {
-            a.transform(m);
-            b.transform(m);
-            c.transform(m);
+            _vertexes[0].transform(m);
+            _vertexes[1].transform(m);
+            _vertexes[2].transform(m);
         }
     };
     struct VertexEntity {
-        std::vector<Trigon> trigons;
-        VertexEntity(std::initializer_list<Trigon> pl): trigons{pl} {};
+        std::vector<Entity> entities;
+        VertexEntity(std::initializer_list<Entity> pl): entities{pl} {};
         VertexEntity(std::string path);
-        void move(Vec3 direction) {
-            for (Trigon& trigon: trigons) {
-                trigon.move(direction);
+        void move(const Vec3& direction) {
+            for (Entity& entity: entities) {
+                entity.move(direction);
             }
         }
         void transform(const std::vector<Vec3>& m) {
-            for (Trigon& trigon: trigons) {
-                trigon.transform(m);
+            for (Entity& entity: entities) {
+                entity.transform(m);
             }
         }
     };
@@ -51,7 +59,7 @@ namespace va {
         ~VertexRenderer() {
             endwin();
         };
-        void add(VertexEntity ve) {
+        void add(const VertexEntity& ve) {
             _entities.push_back(ve);
         }
         std::vector<VertexEntity>& entities() {
