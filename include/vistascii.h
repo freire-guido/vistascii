@@ -39,82 +39,89 @@ namespace va {
             }
         }
     };
-    // 2d float array resource handle
-    struct DepthWindow {
-        int height, width;
-        float** window;
-        DepthWindow() : height{0}, width{0}, window{nullptr} {}
-        DepthWindow(int h, int w, float f = -1) : height{h}, width{w} {
-            window = new float*[height];
-            for (int i = 0; i < height; i++) {
-                window[i] = new float[width];
-                for (int j = 0; j < width; j++) {
-                    window[i][j] = f;
-                }
-            }
-        }
-        ~DepthWindow() {
-            for (int i = 0; i < height; i++) {
-                delete[] window[i];
-            }
-            delete[] window;
-        }
-        DepthWindow(const DepthWindow& dw): height{dw.height}, width{dw.width}, window{new float*[dw.height]} {
-            for (int i = 0; i < height; i++) {
-                window[i] = new float[width];
-                for (int j = 0; j < width; j++) {
-                    window[i][j] = dw.window[i][j];
-                }
-            }
-        }
-        DepthWindow& operator=(const DepthWindow& dw) {
-            for (int i = 0; i < height; i++) {
-                delete[] window[i];
-            }
-            delete[] window;
-            height = dw.height;
-            width = dw.width;
-            window = new float*[height];
-            for (int i = 0; i < height; i++) {
-                window[i] = new float[width];
-                for (int j = 0; j < width; j++) {
-                    window[i][j] = dw.window[i][j];
-                }
-            }
-            return *this;
-        }
-        DepthWindow& operator=(float f) {
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    window[i][j] = f;
-                }
-            }
-            return *this;
-        }
-        float* operator[](int i) {
-            return window[i];
-        }
-    };
-    struct VertexRenderer {
-        int height, width;
-        std::vector<VertexEntity> entities;
-        DepthWindow z_buffer;
-        Vec3 camera_pos;
-        float focal_length;
-        VertexRenderer(std::initializer_list<VertexEntity> el, Vec3 cp = {0, 0, 1}, float fl = 10): entities{el}, camera_pos{cp}, focal_length{fl} {
+
+    class VertexRenderer {
+    public:
+        VertexRenderer(std::initializer_list<VertexEntity> el, Vec3 cp = {0, 0, 1}, float fl = 10): _entities{el}, _normal{cp}, _focal{fl} {
             initscr();
             noecho();
-            getmaxyx(stdscr, height, width);
-            z_buffer = DepthWindow(height, width);
+            getmaxyx(stdscr, _height, _width);
+            _zbuffer = DepthWindow(_height, _width);
         }
         ~VertexRenderer() {
             endwin();
         };
         void add(VertexEntity ve) {
-            entities.push_back(ve);
+            _entities.push_back(ve);
         }
+        std::vector<VertexEntity>& entities() {
+            return _entities;
+        };
         void drawEdge(Vec3 vexA, Vec3 vexB);
         void render();
         void refresh();
+
+    private:
+        // 2d float array resource handle
+        struct DepthWindow {
+            int height, width;
+            float** window;
+            DepthWindow() : height{0}, width{0}, window{nullptr} {}
+            DepthWindow(int h, int w, float f = -1) : height{h}, width{w} {
+                window = new float*[height];
+                for (int i = 0; i < height; i++) {
+                    window[i] = new float[width];
+                    for (int j = 0; j < width; j++) {
+                        window[i][j] = f;
+                    }
+                }
+            }
+            ~DepthWindow() {
+                for (int i = 0; i < height; i++) {
+                    delete[] window[i];
+                }
+                delete[] window;
+            }
+            DepthWindow(const DepthWindow& dw): height{dw.height}, width{dw.width}, window{new float*[dw.height]} {
+                for (int i = 0; i < height; i++) {
+                    window[i] = new float[width];
+                    for (int j = 0; j < width; j++) {
+                        window[i][j] = dw.window[i][j];
+                    }
+                }
+            }
+            DepthWindow& operator=(const DepthWindow& dw) {
+                for (int i = 0; i < height; i++) {
+                    delete[] window[i];
+                }
+                delete[] window;
+                height = dw.height;
+                width = dw.width;
+                window = new float*[height];
+                for (int i = 0; i < height; i++) {
+                    window[i] = new float[width];
+                    for (int j = 0; j < width; j++) {
+                        window[i][j] = dw.window[i][j];
+                    }
+                }
+                return *this;
+            }
+            DepthWindow& operator=(float f) {
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        window[i][j] = f;
+                    }
+                }
+                return *this;
+            }
+            float* operator[](int i) {
+                return window[i];
+            }
+        };
+        int _height, _width;
+        std::vector<VertexEntity> _entities;
+        DepthWindow _zbuffer;
+        Vec3 _normal;
+        float _focal;
     };
 }

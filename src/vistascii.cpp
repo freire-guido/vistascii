@@ -48,8 +48,8 @@ Vec3 persProject(Vec3 v, Vec3 N, float dist) {
 }
 
 void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
-    int w = width;
-    int h = height;
+    int w = _width;
+    int h = _height;
     float dx = vexB.x - vexA.x;
     float dy = vexB.y - vexA.y;
     bool steep = abs(dy) > abs(dx);
@@ -59,8 +59,8 @@ void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
         dx = tmp;
         vexA.swapxy();
         vexB.swapxy();
-        h = width;
-        w = height;
+        h = _width;
+        w = _height;
     }
     if (dx < 0) {
         Vec3 tmp = vexA;
@@ -71,12 +71,12 @@ void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
         int y = dy / dx * (x - vexA.x) + vexA.y;
         if (0 <= y && y < h && 0 <= x && x < w) {
             float depth = vexA.z + (vexB.z - vexA.z)*(x - vexA.x)/(vexB.x - vexA.x);
-            float stored = steep ? z_buffer[x][y] : z_buffer[y][x];
+            float stored = steep ? _zbuffer[x][y] : _zbuffer[y][x];
             if (depth < stored || stored == -1) {
                 if (steep) {
-                    z_buffer[x][y] = depth;
+                    _zbuffer[x][y] = depth;
                 } else {
-                    z_buffer[y][x] = depth;
+                    _zbuffer[y][x] = depth;
                 }
             }
         }
@@ -84,13 +84,13 @@ void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
 }
 
 void VertexRenderer::render() {
-    z_buffer = -1;
-    for (const VertexEntity& entity: entities) {
+    _zbuffer = -1;
+    for (const VertexEntity& entity: _entities) {
         for (const Trigon& trigon: entity.trigons) { 
             for (int i = 0; i < trigon.vertexes().size(); i++) {
-                if (dot(trigon.vertexes()[i], camera_pos) > 0 || dot(trigon.vertexes()[i + 1 % trigon.vertexes().size()], camera_pos) > 0) {
-                    drawEdge(persProject(trigon.vertexes()[i], camera_pos, focal_length) + Vec3(width, height, 0) / 2,
-                        persProject(trigon.vertexes()[(i + 1) % trigon.vertexes().size()], camera_pos, focal_length) + Vec3(width, height, 0) / 2);
+                if (dot(trigon.vertexes()[i], _normal) > 0 || dot(trigon.vertexes()[i + 1 % trigon.vertexes().size()], _normal) > 0) {
+                    drawEdge(persProject(trigon.vertexes()[i], _normal, _focal) + Vec3(_width, _height, 0) / 2,
+                        persProject(trigon.vertexes()[(i + 1) % trigon.vertexes().size()], _normal, _focal) + Vec3(_width, _height, 0) / 2);
                 }   
             }
         }
@@ -99,9 +99,9 @@ void VertexRenderer::render() {
 }
 
 void VertexRenderer::refresh() {
-    for (int row = 0; row < z_buffer.height; row++) {
-        for (int col = 0; col < z_buffer.width; col++) {
-            mvaddch(row, col, getDepthChar(z_buffer[row][col]));
+    for (int row = 0; row < _zbuffer.height; row++) {
+        for (int col = 0; col < _zbuffer.width; col++) {
+            mvaddch(row, col, getDepthChar(_zbuffer[row][col]));
         }
     }
     wrefresh(stdscr);
