@@ -9,8 +9,9 @@ namespace va {
     struct Entity {
         virtual int size() const = 0;
         virtual Vec3* vertexes() = 0;
-        virtual void move(const Vec3&);
-        virtual void transform(const std::vector<Vec3>&);
+        virtual void move(const Vec3&) = 0;
+        virtual void transform(const std::vector<Vec3>&) = 0;
+        virtual ~Entity() {};
     };
     struct Trigon: Entity {
         Vec3 _vertexes[3];
@@ -33,17 +34,18 @@ namespace va {
         }
     };
     struct VertexEntity {
-        std::vector<Entity> entities;
-        VertexEntity(std::initializer_list<Entity> pl): entities{pl} {};
+        std::vector<Entity*> entities;
+        VertexEntity(std::initializer_list<Entity*> pl): entities{pl} {};
         VertexEntity(std::string path);
+        ~VertexEntity();
         void move(const Vec3& direction) {
-            for (Entity& entity: entities) {
-                entity.move(direction);
+            for (Entity* entity: entities) {
+                entity->move(direction);
             }
         }
         void transform(const std::vector<Vec3>& m) {
-            for (Entity& entity: entities) {
-                entity.transform(m);
+            for (Entity* entity: entities) {
+                entity->transform(m);
             }
         }
     };
