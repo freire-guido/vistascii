@@ -3,11 +3,12 @@
 
 using namespace va;
 int main() {
-    va::VertexRenderer ver({va::VertexEntity("./data/tank")}, {0,0,1}, 0.5);
-    ver.entities()[0].move({0, 10, 1});
+    VertexEntity tank("./data/tank");
+    tank.move({0, 10, 1});
+    va::VertexRenderer ver({0,0,1}, 0.5);
     Vec3 move;
     while (true) {
-        ver.render();
+        ver.render({&tank});
         int key = getch();
         if (key == 'w') {
             move = {0, 0.5, 0};
@@ -22,7 +23,6 @@ int main() {
         } else if (key == 'f') {
             move = {0, 0, -0.5};
         }
-        ver.entities()[0].move(move);
     }
     return 0;
 }

@@ -52,7 +52,7 @@ namespace va {
 
     class VertexRenderer {
     public:
-        VertexRenderer(std::initializer_list<VertexEntity> el, Vec3 cp = {0, 0, 1}, float fl = 10): _entities{el}, _normal{cp}, _focal{fl} {
+        VertexRenderer(Vec3 cp = {0, 0, 1}, float fl = 10): _normal{cp}, _focal{fl} {
             initscr();
             noecho();
             getmaxyx(stdscr, _height, _width);
@@ -61,14 +61,8 @@ namespace va {
         ~VertexRenderer() {
             endwin();
         };
-        void add(const VertexEntity& ve) {
-            _entities.push_back(ve);
-        }
-        std::vector<VertexEntity>& entities() {
-            return _entities;
-        };
         void drawEdge(Vec3 vexA, Vec3 vexB);
-        void render();
+        void render(std::initializer_list<VertexEntity*> el);
         void refresh();
 
     private:
@@ -129,7 +123,6 @@ namespace va {
             }
         };
         int _height, _width;
-        std::vector<VertexEntity> _entities;
         DepthWindow _zbuffer;
         Vec3 _normal;
         float _focal;

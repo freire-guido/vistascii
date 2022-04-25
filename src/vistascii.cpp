@@ -89,10 +89,10 @@ void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
     }
 }
 
-void VertexRenderer::render() {
+void VertexRenderer::render(std::initializer_list<VertexEntity*> el) {
     _zbuffer = -1;
-    for (VertexEntity& entity: _entities) {
-        for (Entity* ngon: entity.entities) { 
+    for (VertexEntity* entity: el) {
+        for (Entity* ngon: entity->entities) { 
             for (int i = 0; i < ngon->size(); i++) {
                 if (dot(ngon->vertexes()[i], _normal) > 0 || dot(ngon->vertexes()[i + 1 % ngon->size()], _normal) > 0) {
                     drawEdge(persProject(ngon->vertexes()[i], _normal, _focal) + Vec3(_width, _height, 0) / 2,
