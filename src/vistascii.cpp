@@ -35,9 +35,9 @@ VertexEntity::VertexEntity(std::string path) {
     file.close();
 }
 
-char getDepthChar(int d) {
+char VertexRenderer::getDepthChar(int d) {
     std::string charMap = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
-    d = 3*d;
+    d = 100 / abs(_focal) * d;
     if (d < 0 || d >= charMap.size()) {
         d = charMap.size() - 1;
     }

@@ -76,6 +76,7 @@ namespace va {
 
     private:
         // 2d float array resource handle
+        char getDepthChar(int d);
         struct DepthWindow {
             int height, width;
             float** window;
