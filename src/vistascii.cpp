@@ -24,9 +24,13 @@ Ngon::Ngon(std::string path, int s): size{s}, vertexes{new Vec3[s]} {
 VertexEntity::VertexEntity(std::string path) {
     std::ifstream file(path);
     while(!file.eof()) {
-        Vec3 a, b, c;
-        file >> a >> b >> c;
-        ngons.push_back(Ngon({a, b, c}));
+        unsigned int size;
+        file >> size;
+        Ngon ngon(size);
+        for (int i = 0; i < size; i++) {
+            file >> ngon[i];
+        }
+        ngons.push_back(ngon);
     }
     file.close();
 }

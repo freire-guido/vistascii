@@ -18,7 +18,7 @@ namespace va {
                 vertexes[i] = n[i];
             }
         }
-        const Vec3& operator[](int i) const {
+        Vec3& operator[](int i) const {
             return vertexes[i];
         }
 
