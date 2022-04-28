@@ -10,12 +10,8 @@ namespace va {
         const unsigned int size;
         Vec3* vertexes;
         Ngon(unsigned int s): size{s}, vertexes{new Vec3[s]} {};
-        Ngon(std::initializer_list<Vec3> vxs): size{vxs.size()}, vertexes{new Vec3[vxs.size()]} {
-            auto it = vxs.begin();
-            for (int i = 0; i < size; i++) {
-                vertexes[i] = *it++;
-            }
-        };
+        Ngon(std::initializer_list<Vec3> vxs);
+        Ngon(std::string path, int s);
         Ngon(const Ngon& n): size{n.size} {
             vertexes = new Vec3[size];
             for (int i = 0; i < size; i++) {
@@ -42,6 +38,7 @@ namespace va {
     };
     struct VertexEntity {
         std::vector<Ngon> ngons;
+        VertexEntity() {};
         VertexEntity(std::initializer_list<Ngon> ns): ngons{ns} {};
         VertexEntity(std::string path);
         void move(const Vec3& direction) {

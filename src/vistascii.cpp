@@ -4,9 +4,26 @@
 
 using namespace va;
 
-VertexEntity::VertexEntity(std::string path) {
+Ngon::Ngon(std::initializer_list<Vec3> vxs): size{vxs.size()}, vertexes{new Vec3[vxs.size()]} {
+    auto it = vxs.begin();
+    for (int i = 0; i < size; i++) {
+        vertexes[i] = *it++;
+    }
+}
+
+Ngon::Ngon(std::string path, int s): size{s}, vertexes{new Vec3[s]} {
     std::ifstream file(path);
     std::string line;
+    for (int i = 0; i < s; i++) {
+        float x, y, z;
+        file >> x >> y >> z;
+        vertexes[i] = Vec3(x, y, z);
+    }
+    file.close();
+}
+
+VertexEntity::VertexEntity(std::string path) {
+    std::ifstream file(path);
     while(!file.eof()) {
         float x, y, z;
         file >> x >> y >> z;
