@@ -55,7 +55,7 @@ Vec3 deProject(int x, int y, Vec3 N, float dist) {
 // Normalized N
 Vec3 persProject(Vec3 v, Vec3 N, float dist) {
     float vN = dot(v, N);
-    Vec3 p = v * dist / vN - N;
+    Vec3 p = v * dist / vN - N*dist;
     v.x = dot(p, {1, 0, -N.x});
     v.y = dot(p, {0, 1, -N.y});
     v.z = vN;
