@@ -16,8 +16,7 @@ Ngon::Ngon(std::string path, int s): size{s}, vertexes{new Vec3[s]} {
     std::string line;
     for (int i = 0; i < s; i++) {
         float x, y, z;
-        file >> x >> y >> z;
-        vertexes[i] = Vec3(x, y, z);
+        file >> vertexes[i];
     }
     file.close();
 }
@@ -25,13 +24,8 @@ Ngon::Ngon(std::string path, int s): size{s}, vertexes{new Vec3[s]} {
 VertexEntity::VertexEntity(std::string path) {
     std::ifstream file(path);
     while(!file.eof()) {
-        float x, y, z;
-        file >> x >> y >> z;
-        Vec3 a(x, y, z);
-        file >> x >> y >> z;
-        Vec3 b(x, y, z);
-        file >> x >> y >> z;
-        Vec3 c(x, y, z);
+        Vec3 a, b, c;
+        file >> a >> b >> c;
         ngons.push_back(Ngon({a, b, c}));
     }
     file.close();

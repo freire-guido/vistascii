@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <math.h>
+#include <iostream>
 
 struct Vec3 {
     float x, y, z;
@@ -66,3 +67,5 @@ Vec3 normalize(Vec3 v);
 Vec3 cross(Vec3 a, Vec3 b);
 
 float dot(Vec3 a, Vec3 b);
+
+std::istream& operator>>(std::istream& is, Vec3& v);
