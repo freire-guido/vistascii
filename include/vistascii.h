@@ -51,6 +51,11 @@ namespace va {
                 ngon.transform(m);
             }
         }
+        void add(const VertexEntity& vex) {
+            for (int i = 0; i < vex.ngons.size(); i++) {
+                ngons.push_back(vex.ngons[i]);
+            }
+        }
     };
 
     class VertexRenderer {

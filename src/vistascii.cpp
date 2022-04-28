@@ -37,6 +37,7 @@ VertexEntity::VertexEntity(std::string path) {
 
 char getDepthChar(int d) {
     std::string charMap = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
+    d = 3*d;
     if (d < 0 || d >= charMap.size()) {
         d = charMap.size() - 1;
     }
