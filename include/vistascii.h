@@ -6,46 +6,52 @@
 #include "vec3.h"
 
 namespace va {
-    struct Entity {
-        virtual int size() const = 0;
-        virtual Vec3* vertexes() = 0;
-        virtual void move(const Vec3&) = 0;
-        virtual void transform(const std::vector<Vec3>&) = 0;
-        virtual ~Entity() {};
-    };
-    struct Trigon: Entity {
-        Vec3 _vertexes[3];
-        Trigon(Vec3 a, Vec3 b, Vec3 c): _vertexes{a, b, c} {};
-        int size() const {
-            return 3;
+    struct Ngon {
+        const unsigned int size;
+        Vec3* vertexes;
+        Ngon(unsigned int s): size{s}, vertexes{new Vec3[s]} {};
+        Ngon(std::initializer_list<Vec3> vxs): size{vxs.size()}, vertexes{new Vec3[vxs.size()]} {
+            auto it = vxs.begin();
+            for (int i = 0; i < size; i++) {
+                vertexes[i] = *it++;
+            }
+        };
+        Ngon(const Ngon& n): size{n.size} {
+            vertexes = new Vec3[size];
+            for (int i = 0; i < size; i++) {
+                vertexes[i] = n[i];
+            }
         }
-        Vec3* vertexes() {
-            return _vertexes;
+        const Vec3& operator[](int i) const {
+            return vertexes[i];
         }
-        void move(const Vec3& direction) {
-            _vertexes[0] += direction;
-            _vertexes[1] += direction;
-            _vertexes[2] += direction;
+
+        virtual void move(const Vec3& direction) {
+            for (int i = 0; i < size; i++) {
+                vertexes[i] += direction;
+            }
         }
-        void transform(const std::vector<Vec3>& m) {
-            _vertexes[0].transform(m);
-            _vertexes[1].transform(m);
-            _vertexes[2].transform(m);
+        virtual void transform(const std::vector<Vec3>& m) {
+            for (int i = 0; i < size; i++) {
+                vertexes[i].transform(m);
+            }
         }
+        virtual ~Ngon() {
+            delete[] vertexes;
+        };
     };
     struct VertexEntity {
-        std::vector<Entity*> entities;
-        VertexEntity(std::initializer_list<Entity*> pl): entities{pl} {};
+        std::vector<Ngon> ngons;
+        VertexEntity(std::initializer_list<Ngon> ns): ngons{ns} {};
         VertexEntity(std::string path);
-        ~VertexEntity();
         void move(const Vec3& direction) {
-            for (Entity* entity: entities) {
-                entity->move(direction);
+            for (Ngon& ngon: ngons) {
+                ngon.move(direction);
             }
         }
         void transform(const std::vector<Vec3>& m) {
-            for (Entity* entity: entities) {
-                entity->transform(m);
+            for (Ngon& ngon: ngons) {
+                ngon.transform(m);
             }
         }
     };
@@ -62,7 +68,7 @@ namespace va {
             endwin();
         };
         void drawEdge(Vec3 vexA, Vec3 vexB);
-        void render(std::initializer_list<VertexEntity*> el);
+        void render(const std::vector<VertexEntity>& el);
         void refresh();
 
     private:

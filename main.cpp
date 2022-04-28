@@ -8,7 +8,7 @@ int main() {
     va::VertexRenderer ver({0,0,1}, 0.5);
     Vec3 move;
     while (true) {
-        ver.render({&tank});
+        ver.render({tank});
         int key = getch();
         if (key == 'w') {
             move = {0, 0.5, 0};
@@ -23,6 +23,7 @@ int main() {
         } else if (key == 'f') {
             move = {0, 0, -0.5};
         }
+        tank.move(move);
     }
     return 0;
 }

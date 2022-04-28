@@ -4,7 +4,7 @@
 
 using namespace va;
 
-VertexEntity::VertexEntity(std::string path): entities{} {
+VertexEntity::VertexEntity(std::string path) {
     std::ifstream file(path);
     std::string line;
     while(!file.eof()) {
@@ -15,15 +15,9 @@ VertexEntity::VertexEntity(std::string path): entities{} {
         Vec3 b(x, y, z);
         file >> x >> y >> z;
         Vec3 c(x, y, z);
-        entities.push_back(new Trigon(a, b, c)); // (!) leak
+        ngons.push_back(Ngon({a, b, c}));
     }
     file.close();
-}
-
-VertexEntity::~VertexEntity() {
-    for (Entity* entity: entities) {
-        //delete entity;
-    }
 }
 
 char getDepthChar(int d) {
@@ -89,14 +83,14 @@ void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
     }
 }
 
-void VertexRenderer::render(std::initializer_list<VertexEntity*> el) {
+void VertexRenderer::render(const std::vector<VertexEntity>& el) {
     _zbuffer = -1;
-    for (VertexEntity* entity: el) {
-        for (Entity* ngon: entity->entities) { 
-            for (int i = 0; i < ngon->size(); i++) {
-                if (dot(ngon->vertexes()[i], _normal) > 0 || dot(ngon->vertexes()[i + 1 % ngon->size()], _normal) > 0) {
-                    drawEdge(persProject(ngon->vertexes()[i], _normal, _focal) + Vec3(_width, _height, 0) / 2,
-                        persProject(ngon->vertexes()[(i + 1) % ngon->size()], _normal, _focal) + Vec3(_width, _height, 0) / 2);
+    for (const VertexEntity& entity: el) {
+        for (const Ngon& ngon: entity.ngons) { 
+            for (int i = 0; i < ngon.size; i++) {
+                if (dot(ngon[i], _normal) > 0 || dot(ngon[i + 1 % ngon.size], _normal) > 0) {
+                    drawEdge(persProject(ngon[i], _normal, _focal) + Vec3(_width, _height, 0) / 2,
+                        persProject(ngon[(i + 1) % ngon.size], _normal, _focal) + Vec3(_width, _height, 0) / 2);
                 }   
             }
         }
