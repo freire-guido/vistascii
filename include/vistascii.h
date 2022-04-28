@@ -67,6 +67,7 @@ namespace va {
         ~VertexRenderer() {
             endwin();
         };
+        void moveCamera(const Vec3& m);
         void drawEdge(Vec3 vexA, Vec3 vexB);
         void render(const std::vector<VertexEntity>& el);
         void refresh();

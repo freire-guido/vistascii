@@ -47,6 +47,10 @@ Vec3 persProject(Vec3 v, Vec3 N, float dist) {
     return v;
 }
 
+void VertexRenderer::moveCamera(const Vec3& m) {
+    _normal = normalize(_normal + m);
+}
+
 void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
     int w = _width;
     int h = _height;
