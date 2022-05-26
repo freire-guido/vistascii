@@ -24,4 +24,5 @@ float dot(Vec3 a, Vec3 b) {
 
 std::istream& operator>>(std::istream& is, Vec3& v) {
     is >> v.x >> v.y >> v.z;
+    return is;
 }

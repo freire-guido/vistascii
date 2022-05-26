@@ -70,13 +70,18 @@ namespace va {
             endwin();
         };
         void moveCamera(const Vec3& m);
-        void drawEdge(Vec3 vexA, Vec3 vexB);
-        void render(const std::vector<VertexEntity>& el);
+        void renderEntity(VertexEntity entity);
         void refresh();
 
     private:
         // 2d float array resource handle
         char getDepthChar(int d);
+        struct ScanLine {
+            int xStart = -1;
+            int xEnd = -1;
+            int zStart = -1;
+            int zEnd = -1;
+        };
         struct DepthWindow {
             int height, width;
             float** window;
@@ -132,6 +137,7 @@ namespace va {
                 return window[i];
             }
         };
+        void binEdge(Vec3 vexA, Vec3 vexB, ScanLine yBins[]);
         int _height, _width;
         DepthWindow _zbuffer;
         Vec3 _normal;

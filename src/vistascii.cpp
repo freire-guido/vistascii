@@ -67,7 +67,7 @@ void VertexRenderer::moveCamera(const Vec3& m) {
     _normal = normalize(_normal + m);
 }
 
-void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
+void VertexRenderer::binEdge(Vec3 vexA, Vec3 vexB, ScanLine yBins[]) {
     int w = _width;
     int h = _height;
     float dx = vexB.x - vexA.x;
@@ -90,32 +90,63 @@ void VertexRenderer::drawEdge(Vec3 vexA, Vec3 vexB) {
     for (int x = vexA.x; x <= vexB.x; x++) {
         int y = dy / dx * (x - vexA.x) + vexA.y;
         if (0 <= y && y < h && 0 <= x && x < w) {
-            float depth = vexA.z + (vexB.z - vexA.z)*(x - vexA.x)/(vexB.x - vexA.x);
-            float stored = steep ? _zbuffer[x][y] : _zbuffer[y][x];
-            if (depth < stored || stored == -1) {
-                if (steep) {
-                    _zbuffer[x][y] = depth;
+            float z = vexA.z + (vexB.z - vexA.z)*(x - vexA.x)/(vexB.x - vexA.x);
+            if (steep) {
+                if (y > yBins[x].xStart) {
+                    if (y > yBins[x].xEnd) {
+                        yBins[x].xStart = yBins[x].xEnd;
+                        yBins[x].zStart = yBins[x].zEnd;
+                    }
+                    yBins[x].xEnd = y;
+                    yBins[x].zEnd = z;
                 } else {
-                    _zbuffer[y][x] = depth;
+                    yBins[x].xEnd = yBins[x].xStart;
+                    yBins[x].zEnd = yBins[x].zStart;
+                    yBins[x].xStart = y;
+                    yBins[x].zStart = z;
+                }
+            } else {
+                if (x > yBins[y].xStart) {
+                    if (x > yBins[y].xEnd) {
+                        yBins[y].xStart = yBins[y].xEnd;
+                        yBins[y].zStart = yBins[y].zEnd;
+                    }
+                    yBins[y].xEnd = x;
+                    yBins[y].zEnd = z;
+                } else {
+                    yBins[y].xEnd = yBins[y].xStart;
+                    yBins[y].zEnd = yBins[y].zStart;
+                    yBins[y].xStart = x;
+                    yBins[y].zStart = z;
                 }
             }
         }
     }
 }
 
-void VertexRenderer::render(const std::vector<VertexEntity>& el) {
-    _zbuffer = -1;
-    for (const VertexEntity& entity: el) {
-        for (const Ngon& ngon: entity.ngons) { 
-            for (int i = 0; i < ngon.size; i++) {
-                if (dot(ngon[i], _normal) > 0 || dot(ngon[i + 1 % ngon.size], _normal) > 0) {
-                    drawEdge(persProject(ngon[i], _normal, _focal) + Vec3(_width, _height, 0) / 2,
-                        persProject(ngon[(i + 1) % ngon.size], _normal, _focal) + Vec3(_width, _height, 0) / 2);
-                }   
+void VertexRenderer::renderEntity(VertexEntity entity) {
+    for (Ngon& ngon: entity.ngons) { 
+        ngon[0] = persProject(ngon[0], _normal, _focal) + Vec3(_width, _height, 0);
+        int maxY, minY = ngon[0].y;
+        for (int i = 1; i < ngon.size; i++) {
+            ngon[i] = persProject(ngon[i], _normal, _focal) + Vec3(_width, _height, 0);
+            if (ngon[i].y > maxY) {
+                maxY = ngon[i].y;
+            } else if (ngon[i].y < minY) {
+                minY = ngon[i].y;
             }
         }
+        ScanLine yBins[maxY - minY];
+        for (int i = 0; i < ngon.size; i++) {
+            binEdge(ngon[i], ngon[(i + 1) % ngon.size], yBins);
+        }
+        for (int i = 0; i < maxY - minY; i++) {
+            for (int x = yBins[i].xStart; x < yBins[i].xEnd; x++) {
+                _zbuffer[i + minY][x] = yBins[i].zStart + (yBins[i].zEnd - yBins[i].zStart)*(x - yBins[i].xStart)/(yBins[i].xEnd - yBins[i].xStart);
+            }
+        }
+
     }
-    refresh();
 }
 
 void VertexRenderer::refresh() {
